@@ -6,16 +6,23 @@ import CONFIG from './../config.js';
 export default class Auth{
 
     #checkUser = async (req, res) => {
-        let username = req.body.username; 
+
+        try {
+            let username = req.body.username; 
         
-        let checkQuery = 'SELECT * FROM usuarios WHERE username = ?';
+            let checkQuery = 'SELECT * FROM usuarios WHERE username = ?';
+    
+            let checkResult = await pool.query(checkQuery, [username]);
+    
+            // Verificar si el conteo es mayor a cero (es decir, si el usuario ya existe)
+            if (checkResult.length > 0) return true;
+    
+            return false;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
 
-        let checkResult = await pool.query(checkQuery, [username]);
-
-        // Verificar si el conteo es mayor a cero (es decir, si el usuario ya existe)
-        if (checkResult.length > 0) return true;
-
-        return false;
     }
     
     #validatePassword(clientPass, hashedPass){
@@ -40,7 +47,7 @@ export default class Auth{
           next();
         } catch (error) {
             console.log(error);
-            return res.status(403).json({ message: 'Access denied' });
+            return res.status(403).json({ message: 'Unauthorized access' });
         }
     } 
 

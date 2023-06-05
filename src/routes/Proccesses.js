@@ -10,7 +10,7 @@ proccessesRoutes.get('/', async (req, res) => {
     await objProccessesRoutes.listProccesses(req, res);
 });
 
-proccessesRoutes.post('/newProccess', async (req, res) => {
+proccessesRoutes.post('/newProccess', [objAuthMiddlewares.verifySuperUser], async (req, res) => {
     await objProccessesRoutes.createProccess(req, res);
 });
 
