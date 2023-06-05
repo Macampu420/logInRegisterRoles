@@ -8,7 +8,7 @@ authRoutes.post('/logIn', (req, res, next) => {
     objAuthMiddleware.logIn(req, res, next)
 });
 
-authRoutes.post('/signUp', [objAuthMiddleware.verifyToken] ,(req, res) => {
+authRoutes.post('/signUp', [objAuthMiddleware.verifyToken, objAuthMiddleware.verifySuperUser] ,(req, res) => {
     objAuthMiddleware.signUp(req, res);
 });
 

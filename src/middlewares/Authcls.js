@@ -44,16 +44,21 @@ export default class Auth{
         }
     } 
 
+    async verifySuperUser(req, res, next) {
+        //in config.roles finds the index of the matching user role 
+        let roleIndex = CONFIG.roles.findIndex(role => role.idRol === req.userInfo.userRoleId);
+
+        //if user.role != superUsuario the register action is forbbiden
+        if(roleIndex === -1 || CONFIG.roles[roleIndex].tipoRol !== CONFIG.comparativeStrings.SuperUser){
+            return res.status(403).json({mensaje: 'No tienes permisos para realizar esta accion'});
+        }
+
+        next();
+    }
+
     async signUp(req, res){
 
         try {
-            //in config.roles finds the index of the matching user role 
-            let roleIndex = CONFIG.roles.findIndex(role => role.idRol === req.userInfo.userRoleId);
-
-            //if user.role != superUsuario the register action is forbbiden
-            if(roleIndex === -1 || CONFIG.roles[roleIndex].tipoRol !== CONFIG.comparativeStrings.SuperUser){
-                return res.status(403).json({mensaje: 'No tienes permisos para realizar esta accion'});
-            }
 
             //if #checkUser method returns false the user is'nt created, else the user is'nt aviable
             if(await this.#checkUser(req, res))  return res.status(409).json({ mensaje: "El nombre de usuario ya está en uso. Por favor, elija otro nombre de usuario" });
